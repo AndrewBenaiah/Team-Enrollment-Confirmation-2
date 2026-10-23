@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REVOC - Vehicle Maintenance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+    <!-- ================= LOGIN SCREEN ================= -->
+    <div id="loginScreen" class="login-wrapper">
+        <div class="login-card">
+            <div class="brand">
+                <div class="brand-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="12" cy="12" r="3.2" />
+                        <path
+                            d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.12 2.12M17 17l2.12 2.12M19.1 4.9 17 7M7 17l-2.12 2.12" />
+                    </svg>
+                </div>
+                <h1 class="brand-name">REVOC</h1>
+                <p class="brand-tagline" data-i18n="tagline">Vehicle Maintenance Tracker</p>
+            </div>
+
+            <div class="lang-picker">
+                <select id="loginLang" class="select"></select>
+            </div>
+
+            <form id="loginForm" autocomplete="off">
+                <h2 class="login-title" id="loginTitleText" data-i18n="loginTitle">Welcome Back</h2>
+
+                <label class="field">
+                    <span class="field-label" data-i18n="username">Username</span>
+                    <input type="text" id="loginUsername" class="input" data-i18n-ph="username"
+                        autocomplete="username" />
+                </label>
+
+                <label class="field">
+                    <span class="field-label" data-i18n="password">Password</span>
+                    <div class="pass-wrap">
+                        <input type="password" id="loginPassword" class="input" data-i18n-ph="password"
+                            autocomplete="current-password" />
+                        <button type="button" class="pass-toggle" id="passToggle" aria-label="Show password">👁</button>
+                    </div>
+                </label>
+
+                <p class="form-error" id="loginError"></p>
+
+                <label class="remember-row">
+                    <input type="checkbox" id="rememberMe" />
+                    <span data-i18n="rememberMe">Remember me</span>
+                </label>
+
+                <button type="submit" class="btn-primary btn-block" id="loginBtn" data-i18n="signIn">Sign In</button>
+            </form>
+
+            <p class="demo-hint" id="demoHint">Demo: <b>admin</b> / <b>admin123</b></p>
+
+            <p class="signup-line">
+                <span id="authTogglePrefix" data-i18n="newHere">New here?</span>
+                <button type="button" class="auth-toggle" id="authToggle">Create Account</button>
+            </p>
+        </div>
+    </div>
+
+    <!-- ================= APP SCREEN ================= -->
+    <div id="appScreen" class="app hidden">
+        <header class="app-header">
+            <div class="header-left">
+                <div class="brand-badge small">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="12" cy="12" r="3.2" />
+                        <path
+                            d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.12 2.12M17 17l2.12 2.12M19.1 4.9 17 7M7 17l-2.12 2.12" />
+                    </svg>
+                </div>
+                <span class="brand-name small">REVOC</span>
+            </div>
+            <div class="header-right">
+                <select id="appLang" class="select small-select"></select>
+                <span class="user-chip" id="userChip"></span>
+                <button class="btn-ghost" id="logoutBtn">⏻ <span data-i18n="logout">Logout</span></button>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab active" data-view="dashboard">
+                <span class="tab-icon">📊</span><span class="tab-label" data-i18n="dashboard">Dashboard</span>
+            </button>
+            <button class="tab" data-view="vehicles">
+                <span class="tab-icon">🚗</span><span class="tab-label" data-i18n="vehicles">Vehicles</span>
+            </button>
+            <button class="tab" data-view="services">
+                <span class="tab-icon">🛠️</span><span class="tab-label" data-i18n="services">Services</span>
+            </button>
+            <button class="tab" data-view="bills">
+                <span class="tab-icon">🧾</span><span class="tab-label" data-i18n="bills">Bills</span>
+            </button>
+        </nav>
+
+        <main class="content">
+
+            <!-- Dashboard -->
+            <section id="viewDashboard" class="view active">
+                <div class="stats-grid" id="statsGrid"></div>
+                <div class="dashboard-grid">
+                    <div class="panel">
+                        <div class="panel-head">
+                            <h3 data-i18n="recentServices">Recent Services</h3>
+                        </div>
+                        <div class="panel-body" id="recentServices"></div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-head">
+                            <h3 data-i18n="yourVehicles">Your Vehicles</h3>
+                        </div>
+                        <div class="panel-body" id="dashboardVehicles"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Vehicles -->
+            <section id="viewVehicles" class="view">
+                <div class="view-head">
+                    <h2 data-i18n="vehicles">Vehicles</h2>
+                    <button class="btn-primary" id="addVehicleBtn">+&nbsp;<span data-i18n="addVehicle">Add
+                            Vehicle</span></button>
+                </div>
+                <div class="vehicle-grid" id="vehicleGrid"></div>
+            </section>
+
+            <!-- Services -->
+            <section id="viewServices" class="view">
+                <div class="view-head">
+                    <h2 data-i18n="services">Services</h2>
+                    <button class="btn-primary" id="addServiceBtn">+&nbsp;<span data-i18n="addService">Add
+                            Service</span></button>
+                </div>
+                <div class="service-list" id="serviceList"></div>
+            </section>
+
+            <!-- Bills -->
+            <section id="viewBills" class="view">
+                <div class="view-head">
+                    <h2 data-i18n="bills">Bills</h2>
+                    <button class="btn-primary" id="addBillBtn">+&nbsp;<span data-i18n="addBill">Add
+                            Bill</span></button>
+                </div>
+                <div class="bill-stats" id="billStats"></div>
+                <div class="bill-list" id="billList"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================= VEHICLE MODAL ================= -->
+    <div class="modal" id="vehicleModal">
+        <div class="modal-backdrop" data-close="vehicleModal"></div>
+        <div class="modal-content">
+            <div class="modal-head">
+                <h3 id="vehicleModalTitle" data-i18n="addVehicle">Add Vehicle</h3>
+                <button class="modal-close" data-close="vehicleModal">✕</button>
+            </div>
+            <form id="vehicleForm">
+                <div class="form-row">
+                    <label class="field">
+                        <span class="field-label required" data-i18n="vehicleName">Vehicle Name</span>
+                        <input class="input" id="vfName" maxlength="60" />
+                    </label>
+                    <label class="field">
+                        <span class="field-label required" data-i18n="regNumber">Registration No.</span>
+                        <input class="input" id="vfReg" maxlength="15" placeholder="TN 01 AB 1234" />
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label class="field">
+                        <span class="field-label" data-i18n="make">Make</span>
+                        <input class="input" id="vfMake" maxlength="40" placeholder="Tata / Maruti / Hero..." />
+                    </label>
+                    <label class="field">
+                        <span class="field-label" data-i18n="model">Model</span>
+                        <input class="input" id="vfModel" maxlength="40" placeholder="Nexon / Swift..." />
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label class="field">
+                        <span class="field-label" data-i18n="year">Year</span>
+                        <input type="number" class="input" id="vfYear" min="1960" max="2100" />
+                    </label>
+                    <label class="field">
+                        <span class="field-label" data-i18n="fuelType">Fuel Type</span>
+                        <select class="input" id="vfFuel">
+                            <option value="petrol" data-i18n="petrol">Petrol</option>
+                            <option value="diesel" data-i18n="diesel">Diesel</option>
+                            <option value="cng" data-i18n="cng">CNG</option>
+                            <option value="electric" data-i18n="electric">Electric</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label class="field">
+                        <span class="field-label" data-i18n="color">Color</span>
+                        <input class="input" id="vfColor" maxlength="30" />
+                    </label>
+                </div>
+                <div class="field">
+                    <span class="field-label" data-i18n="vehicleImage">Vehicle Image</span>
+                    <label class="upload-zone" id="vfUploadZone">
+                        <input type="file" id="vfImage" class="hidden-file" accept="image/*" />
+                        <span class="upload-hint">📷&nbsp;<span data-i18n="addImage">Add Image</span></span>
+                    </label>
+                    <div class="img-preview hidden" id="vfPreviewWrap">
+                        <img id="vfPreview" alt="" onclick="viewImage(this.src)" />
+                        <button type="button" class="btn-ghost small" id="vfRemoveImage"
+                            data-i18n="removeImage">Remove</button>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" data-close="vehicleModal" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn-primary" data-i18n="save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= SERVICE MODAL ================= -->
+    <div class="modal" id="serviceModal">
+        <div class="modal-backdrop" data-close="serviceModal"></div>
+        <div class="modal-content">
+            <div class="modal-head">
+                <h3 id="serviceModalTitle" data-i18n="addService">Add Service</h3>
+                <button class="modal-close" data-close="serviceModal">✕</button>
+            </div>
+            <form id="serviceForm">
+                <div class="form-row">
+                    <label class="field">
+                        <span class="field-label required" data-i18n="selectVehicle">Select Vehicle</span>
+                        <select class="input" id="sfVehicle"></select>
+                    </label>
+                    <label class="field">
+                        <span class="field-label required" data-i18n="serviceType">Service Type</span>
+                        <select class="input" id="sfType">
+                            <option value="fullService" data-i18n="fullService">Full Service</option>
+                            <option value="oilChange" data-i18n="oilChange">Oil Change</option>
+                            <option value="brakeService" data-i18n="brakeService">Brake Service</option>
+                            <option value="tireRotation" data-i18n="tireRotation">Tire Rotation</option>
+                            <option value="wheelAlignment" data-i18n="wheelAlignment">Wheel Alignment</option>
+                            <option value="batteryService" data-i18n="batteryService">Battery Service</option>
+                            <option value="acService" data-i18n="acService">AC Service</option>
+                            <option value="wash" data-i18n="wash">Washing & Detailing</option>
+                            <option value="insurance" data-i18n="insurance">Insurance</option>
+                            <option value="other" data-i18n="other">Other</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label class="field">
+                        <span class="field-label required" data-i18n="date">Date</span>
+                        <input type="date" class="input" id="sfDate" />
+                    </label>
+                    <label class="field">
+                        <span class="field-label" data-i18n="odometer">Odometer (km)</span>
+                        <input type="number" class="input" id="sfOdo" min="0" />
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label class="field">
+                        <span class="field-label" data-i18n="cost">Cost (₹)</span>
+                        <input type="number" class="input" id="sfCost" min="0" step="1" />
+                    </label>
+                    <label class="field">
+                        <span class="field-label" data-i18n="nextServiceDate">Next Service Date</span>
+                        <input type="date" class="input" id="sfNext" />
+                    </label>
+                </div>
+                <div class="field">
+                    <span class="field-label" data-i18n="note">Note</span>
+                    <textarea class="input textarea" id="sfNote" rows="2" maxlength="300"></textarea>
+                </div>
+                <div class="field">
+                    <span class="field-label" data-i18n="serviceImage">Receipt / Photo</span>
+                    <label class="upload-zone" id="sfUploadZone">
+                        <input type="file" id="sfImage" class="hidden-file" accept="image/*" />
+                        <span class="upload-hint">📎&nbsp;<span data-i18n="addImage">Add Image</span></span>
+                    </label>
+                    <div class="img-preview hidden" id="sfPreviewWrap">
+                        <img id="sfPreview" alt="" onclick="preview(this.src)" />
+                        <button type="button" class="btn-ghost small" id="sfRemoveImage"
+                            data-i18n="removeImage">Remove</button>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" data-close="serviceModal" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn-primary" data-i18n="save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= BILL MODAL ================= -->
+    <div class="modal" id="billModal">
+        <div class="modal-backdrop" data-close="billModal"></div>
+        <div class="modal-content">
+            <div class="modal-head">
+                <h3 id="billModalTitle" data-i18n="addBill">Add Bill</h3>
+                <button class="modal-close" data-close="billModal">✕</button>
+            </div>
+            <form id="billForm">
+                <div class="form-row">
+                    <label class="field">
+                        <span class="field-label required" data-i18n="billNumber">Bill No.</span>
+                        <input class="input" id="bfNumber" maxlength="30" placeholder="INV-001" />
+                    </label>
+                    <label class="field">
+                        <span class="field-label required" data-i18n="selectVehicle">Select Vehicle</span>
+                        <select class="input" id="bfVehicle"></select>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label class="field">
+                        <span class="field-label required" data-i18n="date">Date</span>
+                        <input type="date" class="input" id="bfDate" />
+                    </label>
+                    <label class="field">
+                        <span class="field-label required" data-i18n="amount">Amount (₹)</span>
+                        <input type="number" class="input" id="bfAmount" min="0" step="1" />
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label class="field">
+                        <span class="field-label" data-i18n="billCategory">Category</span>
+                        <select class="input" id="bfCategory">
+                            <option value="fullService" data-i18n="fullService">Full Service</option>
+                            <option value="oilChange" data-i18n="oilChange">Oil Change</option>
+                            <option value="brakeService" data-i18n="brakeService">Brake Service</option>
+                            <option value="tireRotation" data-i18n="tireRotation">Tire Rotation</option>
+                            <option value="wheelAlignment" data-i18n="wheelAlignment">Wheel Alignment</option>
+                            <option value="batteryService" data-i18n="batteryService">Battery Service</option>
+                            <option value="acService" data-i18n="acService">AC Service</option>
+                            <option value="wash" data-i18n="wash">Washing and Detailing</option>
+                            <option value="insurance" data-i18n="insurance">Insurance</option>
+                            <option value="other" data-i18n="other">Other</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span class="field-label" data-i18n="vendor">Vendor / Garage</span>
+                        <input class="input" id="bfVendor" maxlength="60" />
+                    </label>
+                </div>
+                <div class="field">
+                    <span class="field-label" data-i18n="note">Note</span>
+                    <textarea class="input textarea" id="bfNote" rows="2" maxlength="300"></textarea>
+                </div>
+                <div class="field">
+                    <span class="field-label" data-i18n="billImage">Bill / Receipt Photo</span>
+                    <label class="upload-zone" id="bfUploadZone">
+                        <input type="file" id="bfImage" class="hidden-file" accept="image/*" />
+                        <span class="upload-hint">📎&nbsp;<span data-i18n="addImage">Add Image</span></span>
+                    </label>
+                    <div class="img-preview hidden" id="bfPreviewWrap">
+                        <img id="bfPreview" alt="" onclick="viewImage(this.src)" />
+                        <button type="button" class="btn-ghost small" id="bfRemoveImage"
+                            data-i18n="removeImage">Remove</button>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" data-close="billModal" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn-primary" data-i18n="save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= IMAGE VIEWER MODAL ================= -->
+    <div class="modal" id="imgModal">
+        <div class="modal-backdrop" data-close="imgModal"></div>
+        <div class="modal-content image-viewer">
+            <button class="modal-close" data-close="imgModal">✕</button>
+            <img id="imgModalImg" alt="Preview" />
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
